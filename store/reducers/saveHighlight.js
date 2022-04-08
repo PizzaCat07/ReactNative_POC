@@ -12,6 +12,8 @@ const highlightReducer = (state = initialState, action) => {
         action.payload.id,
         action.payload.articleID,
         action.payload.text,
+        action.payload.start,
+        action.payload.end,
       );
 
       return {

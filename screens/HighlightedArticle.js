@@ -8,15 +8,17 @@ import {
   Button,
 } from 'react-native';
 import {useSelector, useDispatch} from 'react-redux';
+import {SelectableText} from '@alentoma/react-native-selectable-text';
 
 import Highlighter from 'react-native-highlight-words';
 import HighlightItem from '../models/highlightItem';
-
 import {setHighlight} from '../store/actions/saveHighlight';
 
 const HighlightScreen = props => {
   const articleId = props.route.params.articleId;
-  const textHighlight = props.route.params.text;
+  const highlightId = props.route.params.id;
+  const highlightStart = props.route.params.start;
+  const highlightEnd = props.route.params.end;
 
   const selectedArticle = useSelector(state =>
     state.news.loadedArticles.find(article => article.id === articleId),
@@ -35,20 +37,18 @@ const HighlightScreen = props => {
         <Text>{selectedArticle.date}</Text>
       </View>
       <View>
-        <Text style={styles.content} selectable={true} selectionColor="yellow">
-          <Highlighter
-            highlightStyle={{backgroundColor: 'yellow'}}
-            searchWords={textHighlight}
-            textToHighlight={selectedArticle.description}
+        <View>
+          <Text>{selectedArticle.title}</Text>
+        </View>
+        <View style={styles.content}>
+          <SelectableText
+            highlights={[
+              {id: highlightId, start: highlightStart, end: highlightEnd},
+            ]}
+            highlightColor={'yellow'}
+            value={selectedArticle.content}
           />
-        </Text>
-        <Text style={styles.content} selectable={true} selectionColor="yellow">
-          <Highlighter
-            highlightStyle={{backgroundColor: 'yellow'}}
-            searchWords={textHighlight}
-            textToHighlight={selectedArticle.content}
-          />
-        </Text>
+        </View>
       </View>
     </ScrollView>
   );

@@ -51,22 +51,6 @@ const SelectScreen = props => {
           data={loadedArticles}
           setClicked={setClicked}
         />
-
-        {/* <FlatList
-          data={loadedArticles}
-          keyExtractor={(item) => item.id}
-          renderItem={(itemData) => (
-            <SummaryCard
-              title={itemData.item.title}
-              source={itemData.item.source}
-              description={itemData.item.description}
-              date={itemData.item.publishTime}
-              onSelect={() => {
-                selectContentHandler(itemData.item.id);
-              }}
-            />
-          )}
-        /> */}
       </View>
     </View>
   );

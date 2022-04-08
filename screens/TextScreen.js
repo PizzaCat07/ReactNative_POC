@@ -15,24 +15,17 @@ const TextScreen = props => {
     state.news.loadedArticles.find(article => article.id === articleId),
   );
 
-  let [save, setSave] = useState('');
-  let [startHighlight, setStartHighlight] = useState(0);
-  let [endHighlight, setEndHighlight] = useState(0);
-  let [startHighlightContent, setStartHighlightContent] = useState(0);
-  let [endHighlightContent, setEndHighlightContent] = useState(0);
+  const storeHighlight = useSelector(state =>
+    state.highlight.savedHighlights.filter(
+      highlight => highlight.articleId === articleId,
+    ),
+  );
+  let highlightId = Math.floor(Math.random() * 1000) + 1;
 
   const dispatch = useDispatch();
 
-  const highlightClip = async () => {
-    const savedClip = await Clipboard.getString();
-    setSave(savedClip);
-  };
-
-  let highlightText = [save];
-  let highlightId = Math.floor(Math.random() * 1000) + 1;
-
-  const addToSaved = (highlightId, articleId, highlightText) => {
-    dispatch(setHighlight(highlightId, articleId, highlightText));
+  const addToSaved = (highlightId, articleId, highlightText, start, end) => {
+    dispatch(setHighlight(highlightId, articleId, highlightText, start, end));
   };
 
   return (
@@ -47,59 +40,41 @@ const TextScreen = props => {
         <Text>{selectedArticle.date}</Text>
       </View>
       <View>
-        <View>
-          <SelectableText
-            menuItems={['Highlight']}
-            onSelection={({
-              eventType,
-              content,
-              selectionStart,
-              selectionEnd,
-            }) => {
-              setStartHighlight(selectionStart);
-              setEndHighlight(selectionEnd);
-              setSave(content);
-              addToSaved(highlightId, articleId, [save]);
-            }}
-            highlights={[{start: [startHighlight], end: [endHighlight]}]}
-            highlightColor="yellow"
-            value={selectedArticle.description}
-          />
-        </View>
         <View style={styles.content}>
           <SelectableText
-            menuItems={['Highlight']}
+            menuItems={['Highlight and Save']}
             onSelection={({
               eventType,
               content,
               selectionStart,
               selectionEnd,
             }) => {
-              setStartHighlightContent(selectionStart);
-              setEndHighlightContent(selectionEnd);
-              console.log(content);
-              setSave(content);
-              addToSaved(highlightId, articleId, [save]);
+              addToSaved(
+                highlightId,
+                articleId,
+                content,
+                selectionStart,
+                selectionEnd,
+              );
             }}
-            highlights={[
-              {start: [startHighlightContent], end: [endHighlightContent]},
-            ]}
+            highlights={storeHighlight}
             highlightColor="yellow"
-            value={selectedArticle.content}
+            style={styles.content}
+            value={`${selectedArticle.description}\n\n${selectedArticle.content}`}
           />
         </View>
       </View>
 
       <View>
         <Button
-          title="Highlight"
+          title="Array"
           color={'blue'}
-          onPress={() => highlightClip()}
+          onPress={() => console.log(highlightList)}
         />
         <Button
-          title="Save"
+          title="State"
           color={'green'}
-          onPress={() => addToSaved(highlightId, articleId, highlightText)}
+          onPress={() => console.log(storeHighlight)}
         />
         <Button
           title="Saved Clips"
@@ -115,10 +90,11 @@ const styles = StyleSheet.create({
     fontSize: 18,
     paddingBottom: 5,
     fontWeight: 'bold',
+    color: 'red',
   },
   content: {
-    paddingTop: 10,
-    fontSize: 12,
+    fontSize: 15,
+    color: 'black',
   },
 });
 

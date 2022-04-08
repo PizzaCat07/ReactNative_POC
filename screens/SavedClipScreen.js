@@ -6,10 +6,12 @@ import {useSelector} from 'react-redux';
 const SavedClipScreen = props => {
   const {savedHighlights} = useSelector(state => state.highlight);
 
-  const returnArticleHandler = (id, text) => {
+  const returnArticleHandler = (id, articleId, start, end) => {
     props.navigation.navigate('Highlight', {
-      articleId: id,
-      text: text,
+      id: id,
+      articleId: articleId,
+      start: start,
+      end: end,
     });
   };
 
@@ -25,8 +27,10 @@ const SavedClipScreen = props => {
               id={itemData.item.id}
               onSelect={() =>
                 returnArticleHandler(
+                  itemData.item.id,
                   itemData.item.articleId,
-                  itemData.item.text,
+                  itemData.item.start,
+                  itemData.item.end,
                 )
               }
             />
