@@ -43,7 +43,7 @@ const SummaryCard = ({searchPhrase, setClicked, data}) => {
             <Item
               title={item.title}
               source={item.source}
-              date={item.date}
+              date={item.publishTime}
               description={item.description}
             />
           </View>
@@ -177,9 +177,11 @@ const styles = StyleSheet.create({
     fontSize: 15,
     paddingBottom: 5,
     fontWeight: 'bold',
+    color: 'red',
   },
   description: {
-    paddingTop: 10,
+    color: 'black',
+    paddingTop: 5,
   },
 });
 
