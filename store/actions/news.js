@@ -3,14 +3,26 @@ import axios from 'axios';
 import Article from '../../models/article';
 
 export const SET_NEWS = 'SET_NEWS';
+export const SET_NEWS_2 = 'SET_NEWS_2';
+export const SET_NEWS_ALL = 'SET_NEWS_ALL';
 
-const url =
+const api1_url =
   'https://newsapi.org//v2/top-headlines?country=ca&apiKey=f48f7a5665ab4ed484c1090882ecb228';
+
+const api2_options = {
+  method: 'GET',
+  url: 'https://free-news.p.rapidapi.com/v1/search',
+  params: {q: 'Canada', lang: 'en'},
+  headers: {
+    'X-RapidAPI-Host': 'free-news.p.rapidapi.com',
+    'X-RapidAPI-Key': 'ea26f9eafbmsh116432203cf2f7ap100ba6jsn92d116678e77',
+  },
+};
 
 export const fetchNews = () => {
   try {
     return async dispatch => {
-      const res = await axios.get(url);
+      const res = await axios.get(api1_url);
 
       if (res.data) {
         const resData = res.data;
@@ -55,5 +67,91 @@ export const fetchNews = () => {
         console.log('unable to fetch');
       }
     };
+    // eslint-disable-next-line no-unreachable
   } catch (error) {}
+};
+
+export const fetchNews2 = () => {
+  try {
+    return async dispatch => {
+      api2_options.params = {q: 'Covid', lang: 'en'};
+      const res = await axios.request(api2_options);
+
+      if (res.data) {
+        const resData = res.data;
+        const loadedArticles = [];
+        const totalResults = resData.totalResults;
+        const articleData = resData.articles;
+
+        for (let x in articleData) {
+          const blank = '';
+
+          loadedArticles.push(
+            new Article(
+              articleData[x]._id,
+              articleData[x].rights,
+              articleData[x].title,
+              blank,
+              articleData[x].published_date,
+              articleData[x].summary,
+            ),
+          );
+        }
+        console.log(loadedArticles);
+
+        dispatch({
+          type: SET_NEWS_2,
+          payload: res.data,
+          totalResults: totalResults,
+          loadedArticles: loadedArticles,
+        });
+      } else {
+        console.log('unable to fetch');
+      }
+    };
+  } catch (error) {}
+};
+
+export const fetchNews_all = () => {
+  try {
+    return async dispatch => {
+      const api1 = await axios.get(api1_url);
+      const api2 = await axios.request(api2_options);
+      const blank = ' ';
+      const loadedArticles = [];
+
+      const api1_data = api1.data.articles;
+      const api2_data = api2.data.articles;
+
+      for (let x in api1_data) {
+        loadedArticles.push(
+          new Article(
+            x,
+            api1_data[x].source.name,
+            api1_data[x].title,
+            blank,
+            api1_data[x].publishedAt,
+            api1_data[x].content,
+          ),
+        );
+      }
+      for (let x in api2_data) {
+        loadedArticles.push(
+          new Article(
+            api2_data[x]._id,
+            api2_data[x].rights,
+            api2_data[x].title,
+            blank,
+            api2_data[x].published_date,
+            api2_data[x].summary,
+          ),
+        );
+      }
+
+      dispatch({
+        type: SET_NEWS_ALL,
+        loadedArticles: loadedArticles,
+      });
+    };
+  } catch {}
 };

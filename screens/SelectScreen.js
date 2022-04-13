@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 import {useSelector, useDispatch} from 'react-redux';
 
-import {fetchNews} from '../store/actions/news';
+import {fetchNews, fetchNews2, fetchNews_all} from '../store/actions/news';
 import SummaryCard from '../components/SummaryCard';
 
 import SearchBar from '../components/SearchBar';
@@ -26,14 +26,22 @@ const SelectScreen = props => {
   const [searchPhrase, setSearchPhrase] = useState(searchPhrasePass);
   const [clicked, setClicked] = useState(false);
 
-  useEffect(() => {
+  const refresh = () => {
     dispatch(fetchNews());
+    dispatch(fetchNews2());
+  };
+
+  useEffect(() => {
+    dispatch(fetchNews_all());
   }, []);
 
   return (
     <View>
       <View>
         <View>
+          <Button title="Api 1" onPress={() => dispatch(fetchNews())} />
+          <Button title="Api 2" onPress={() => dispatch(fetchNews2())} />
+          <Button title="refresh" onPress={() => dispatch(fetchNews_all)} />
           <Button
             title="Saved Clips"
             onPress={() => props.navigation.navigate('SavedClip')}
