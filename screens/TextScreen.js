@@ -1,12 +1,10 @@
 import React, {useState} from 'react';
 import {View, Text, StyleSheet, ScrollView, Button} from 'react-native';
 import {useSelector, useDispatch} from 'react-redux';
-import Clipboard from '@react-native-clipboard/clipboard';
-import Highlighter from 'react-native-highlight-words';
-import HighlightItem from '../models/highlightItem';
 import {SelectableText} from '@alentoma/react-native-selectable-text';
 
 import {setHighlight} from '../store/actions/saveHighlight';
+import {deleteSavedHighlight} from '../store/actions/saveHighlight';
 
 const TextScreen = props => {
   const articleId = props.route.params.articleId;
@@ -59,6 +57,7 @@ const TextScreen = props => {
             }}
             highlights={storeHighlight}
             highlightColor="yellow"
+            onHighlightPress={id => dispatch(deleteSavedHighlight(id))}
             style={styles.content}
             value={`${selectedArticle.description}\n\n${selectedArticle.content}`}
           />
@@ -66,7 +65,7 @@ const TextScreen = props => {
       </View>
 
       <View>
-        <Button
+        {/*  <Button
           title="Array"
           color={'blue'}
           onPress={() => console.log(highlightList)}
@@ -75,7 +74,7 @@ const TextScreen = props => {
           title="State"
           color={'green'}
           onPress={() => console.log(storeHighlight)}
-        />
+        /> */}
         <Button
           title="Saved Clips"
           onPress={() => props.navigation.navigate('SavedClip')}

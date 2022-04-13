@@ -31,7 +31,7 @@ const SelectScreen = props => {
   }, []);
 
   return (
-    <View style={styles.container}>
+    <View>
       <View>
         <View>
           <Button
@@ -45,12 +45,13 @@ const SelectScreen = props => {
             setClicked={setClicked}
           />
         </View>
-
-        <SummaryCard
-          searchPhrase={searchPhrase}
-          data={loadedArticles}
-          setClicked={setClicked}
-        />
+        <View>
+          <SummaryCard
+            searchPhrase={searchPhrase}
+            data={loadedArticles}
+            setClicked={setClicked}
+          />
+        </View>
       </View>
     </View>
   );

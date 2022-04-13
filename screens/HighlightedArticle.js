@@ -10,8 +10,6 @@ import {
 import {useSelector, useDispatch} from 'react-redux';
 import {SelectableText} from '@alentoma/react-native-selectable-text';
 
-import Highlighter from 'react-native-highlight-words';
-import HighlightItem from '../models/highlightItem';
 import {setHighlight} from '../store/actions/saveHighlight';
 
 const HighlightScreen = props => {
