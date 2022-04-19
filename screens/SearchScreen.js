@@ -7,21 +7,25 @@ import {
   ScrollView,
   Button,
   TextInput,
+  Switch,
 } from 'react-native';
 import {useDispatch} from 'react-redux';
 import axios from 'axios';
 
 import SearchBar from '../components/SearchBar';
 import {fetchNews} from '../store/actions/news';
+import BigList from 'react-native-big-list';
 
 const SearchScreen = props => {
   const [searchPhrasePass, setSearchPhrase] = useState('');
+  const [api1, setApi1] = useState(true);
+  const [api2, setApi2] = useState(true);
 
-  const fetchAPI = () => {
+  const fetchAPI = searchPhrasePass => {
     const options = {
       method: 'GET',
       url: 'https://free-news.p.rapidapi.com/v1/search',
-      params: {q: 'Elon Musk', lang: 'en'},
+      params: {q: searchPhrasePass, lang: 'en'},
       headers: {
         'X-RapidAPI-Host': 'free-news.p.rapidapi.com',
         'X-RapidAPI-Key': 'ea26f9eafbmsh116432203cf2f7ap100ba6jsn92d116678e77',
@@ -31,6 +35,7 @@ const SearchScreen = props => {
     axios
       .request(options)
       .then(function (response) {
+        console.log(searchPhrasePass);
         console.log(response.data);
       })
       .catch(function (error) {
@@ -44,6 +49,12 @@ const SearchScreen = props => {
     );
     console.log(res.data);
   };
+
+  const renderItem = ({item}) => (
+    <View>
+      <Text>{item.label}</Text>
+    </View>
+  );
 
   return (
     <View style={styles.container}>
@@ -60,10 +71,24 @@ const SearchScreen = props => {
         onPress={() =>
           props.navigation.navigate('Select', {
             searchPhrasePass: searchPhrasePass,
+            api1: api1,
+            api2: api2,
           })
         }
       />
-      <Button title="Test API" onPress={() => fetchApi_1()} />
+      <Button title="Test API" onPress={() => fetchAPI(searchPhrasePass)} />
+      <View>
+        <View style={styles.filterContainer}>
+          <Text>Api 1</Text>
+          <Switch value={api1} onValueChange={newValue => setApi1(newValue)} />
+        </View>
+        <View style={styles.filterContainer}>
+          <Text>Api 2</Text>
+          <Switch value={api2} onValueChange={newValue => setApi2(newValue)} />
+          {/* {console.log(`API 1: ${api1}`)}
+          {console.log(`API 2: ${api2}`)} */}
+        </View>
+      </View>
     </View>
   );
 };
@@ -72,12 +97,17 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
   },
   input: {
     fontSize: 20,
     marginLeft: 10,
     width: '90%',
+  },
+  filterContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
 });
 

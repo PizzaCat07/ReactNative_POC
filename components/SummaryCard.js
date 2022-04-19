@@ -2,11 +2,18 @@ import React from 'react';
 import {View, Text, StyleSheet, TouchableOpacity, FlatList} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import Highlighter from 'react-native-highlight-words';
+import BigList from 'react-native-big-list';
 
-const Item = ({title, source, date, description}) => (
+const Item = ({title, searchWords, source, date, description}) => (
   <View style={styles.card}>
     <View>
-      <Text style={styles.title}>{title}</Text>
+      <Text style={styles.title}>
+        <Highlighter
+          highlightStyle={{backgroundColor: 'yellow'}}
+          searchWords={searchWords}
+          textToHighlight={title}
+        />
+      </Text>
     </View>
     <View>
       <Text>{source}</Text>
@@ -25,6 +32,23 @@ const SummaryCard = ({searchPhrase, setClicked, data}) => {
   const searchWords = [searchPhrase];
 
   const renderItem = ({item}) => {
+    return (
+      <TouchableOpacity
+        onPress={() => navigation.navigate('Text', {articleId: item.id})}>
+        <View>
+          <Item
+            title={item.title}
+            searchWords={searchWords}
+            source={item.source}
+            date={item.publishTime}
+            description={item.description}
+          />
+        </View>
+      </TouchableOpacity>
+    );
+  };
+
+  /* const renderItem = ({item}) => {
     // when no input, show all
     if (searchPhrase === '') {
       return (
@@ -116,7 +140,7 @@ const SummaryCard = ({searchPhrase, setClicked, data}) => {
         </TouchableOpacity>
       );
     }
-  };
+  }; */
 
   return (
     <View

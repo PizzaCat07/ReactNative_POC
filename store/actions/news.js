@@ -19,7 +19,7 @@ const api2_options = {
   },
 };
 
-export const fetchNews = () => {
+export const fetchNews = searchPhrase => {
   try {
     return async dispatch => {
       const res = await axios.get(api1_url);
@@ -36,7 +36,7 @@ export const fetchNews = () => {
             loadedArticles.push(
               new Article(
                 x,
-                articleData[x].source.name,
+                'Api1',
                 articleData[x].title,
                 noDescription,
                 articleData[x].publishedAt,
@@ -47,7 +47,7 @@ export const fetchNews = () => {
             loadedArticles.push(
               new Article(
                 x,
-                articleData[x].source.name,
+                'Api1',
                 articleData[x].title,
                 articleData[x].description,
                 articleData[x].publishedAt,
@@ -57,11 +57,18 @@ export const fetchNews = () => {
           }
         }
 
+        const filterItems = loadedArticles.filter(a =>
+          a.title.toLowerCase().includes(searchPhrase.toLowerCase()),
+        );
+
+        /*         console.log(filterItems);
+        console.log(loadedArticles);
+ */
         dispatch({
           type: SET_NEWS,
           payload: res.data,
           totalResults: totalResults,
-          loadedArticles: loadedArticles,
+          loadedArticles: filterItems,
         });
       } else {
         console.log('unable to fetch');
@@ -71,10 +78,10 @@ export const fetchNews = () => {
   } catch (error) {}
 };
 
-export const fetchNews2 = () => {
+export const fetchNews2 = searchPhrase => {
   try {
     return async dispatch => {
-      api2_options.params = {q: 'Covid', lang: 'en'};
+      api2_options.params = {q: searchPhrase, lang: 'en'};
       const res = await axios.request(api2_options);
 
       if (res.data) {
@@ -89,7 +96,7 @@ export const fetchNews2 = () => {
           loadedArticles.push(
             new Article(
               articleData[x]._id,
-              articleData[x].rights,
+              'Api2',
               articleData[x].title,
               blank,
               articleData[x].published_date,
@@ -97,7 +104,7 @@ export const fetchNews2 = () => {
             ),
           );
         }
-        console.log(loadedArticles);
+        // console.log(loadedArticles);
 
         dispatch({
           type: SET_NEWS_2,
@@ -112,37 +119,44 @@ export const fetchNews2 = () => {
   } catch (error) {}
 };
 
-export const fetchNews_all = () => {
+export const fetchNews_all = searchPhrase => {
   try {
     return async dispatch => {
       const api1 = await axios.get(api1_url);
-      const api2 = await axios.request(api2_options);
       const blank = ' ';
       const loadedArticles = [];
 
       const api1_data = api1.data.articles;
-      const api2_data = api2.data.articles;
 
       for (let x in api1_data) {
         loadedArticles.push(
           new Article(
             x,
-            api1_data[x].source.name,
+            'api1',
             api1_data[x].title,
             blank,
-            api1_data[x].publishedAt,
+            blank,
             api1_data[x].content,
           ),
         );
       }
+
+      const filterItems = loadedArticles.filter(a =>
+        a.title.toLowerCase().includes(searchPhrase.toLowerCase()),
+      );
+
+      api2_options.params = {q: searchPhrase, lang: 'en'};
+      const api2 = await axios.request(api2_options);
+      const api2_data = api2.data.articles;
+
       for (let x in api2_data) {
-        loadedArticles.push(
+        filterItems.push(
           new Article(
             api2_data[x]._id,
-            api2_data[x].rights,
+            'api2',
             api2_data[x].title,
             blank,
-            api2_data[x].published_date,
+            blank,
             api2_data[x].summary,
           ),
         );
@@ -150,8 +164,10 @@ export const fetchNews_all = () => {
 
       dispatch({
         type: SET_NEWS_ALL,
-        loadedArticles: loadedArticles,
+        loadedArticles: filterItems,
       });
     };
-  } catch {}
+  } catch {
+    console.log(err);
+  }
 };
