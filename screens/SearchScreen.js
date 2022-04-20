@@ -76,7 +76,11 @@ const SearchScreen = props => {
           })
         }
       />
-      <Button title="Test API" onPress={() => fetchAPI(searchPhrasePass)} />
+      <Button
+        title="Saved Clips"
+        onPress={() => props.navigation.navigate('SavedClip')}
+      />
+      {/* <Button title="Test API" onPress={() => fetchAPI(searchPhrasePass)} /> */}
       <View>
         <View style={styles.filterContainer}>
           <Text>Api 1</Text>

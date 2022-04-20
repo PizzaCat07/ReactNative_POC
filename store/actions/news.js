@@ -19,6 +19,9 @@ const api2_options = {
   },
 };
 
+//API downloads all top head lines then filters based on search after the downloaded into array
+//Client side query
+
 export const fetchNews = searchPhrase => {
   try {
     return async dispatch => {
@@ -30,6 +33,7 @@ export const fetchNews = searchPhrase => {
         const totalResults = resData.totalResults;
         const articleData = resData.articles;
 
+        //Create articles objects to pus into loaded articles array
         for (let x in articleData) {
           if (!articleData[x].description) {
             const noDescription = '';
@@ -57,6 +61,8 @@ export const fetchNews = searchPhrase => {
           }
         }
 
+        //Filter array by search phrase
+
         const filterItems = loadedArticles.filter(a =>
           a.title.toLowerCase().includes(searchPhrase.toLowerCase()),
         );
@@ -75,9 +81,13 @@ export const fetchNews = searchPhrase => {
       }
     };
     // eslint-disable-next-line no-unreachable
-  } catch (error) {}
+  } catch (error) {
+    console.log(error);
+  }
 };
 
+//Api 2 feeds search phrase into query for the API then gets the results, only filtered
+//data is moved into array, server side query
 export const fetchNews2 = searchPhrase => {
   try {
     return async dispatch => {
@@ -116,9 +126,13 @@ export const fetchNews2 = searchPhrase => {
         console.log('unable to fetch');
       }
     };
-  } catch (error) {}
+  } catch (error) {
+    console.log(error);
+  }
 };
 
+// uses both API's API 1 is run first and then filtered to a new array
+// API 2 is then run and appended to the filtered array
 export const fetchNews_all = searchPhrase => {
   try {
     return async dispatch => {
@@ -135,12 +149,13 @@ export const fetchNews_all = searchPhrase => {
             'api1',
             api1_data[x].title,
             blank,
-            blank,
+            api1_data[x].publishedAt,
             api1_data[x].content,
           ),
         );
       }
 
+      // new array
       const filterItems = loadedArticles.filter(a =>
         a.title.toLowerCase().includes(searchPhrase.toLowerCase()),
       );
@@ -150,13 +165,14 @@ export const fetchNews_all = searchPhrase => {
       const api2_data = api2.data.articles;
 
       for (let x in api2_data) {
+        //API 2 push to new filtered array
         filterItems.push(
           new Article(
             api2_data[x]._id,
             'api2',
             api2_data[x].title,
             blank,
-            blank,
+            api2_data[x].published_date,
             api2_data[x].summary,
           ),
         );
@@ -167,7 +183,7 @@ export const fetchNews_all = searchPhrase => {
         loadedArticles: filterItems,
       });
     };
-  } catch {
-    console.log(err);
+  } catch (error) {
+    console.log(error);
   }
 };
