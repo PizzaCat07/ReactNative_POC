@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   View,
   Text,
@@ -9,19 +9,65 @@ import {
 } from 'react-native';
 import {useSelector, useDispatch} from 'react-redux';
 import {SelectableText} from '@alentoma/react-native-selectable-text';
+import SQLite from 'react-native-sqlite-storage';
 
 import {setHighlight} from '../store/actions/saveHighlight';
 
 const HighlightScreen = props => {
   const articleId = props.route.params.articleId;
-  const highlightId = props.route.params.id;
-  const highlightStart = props.route.params.start;
-  const highlightEnd = props.route.params.end;
 
-  const selectedArticle = useSelector(state =>
+  const db = SQLite.openDatabase('articles_2.db');
+  const [article, setArticle] = useState([]);
+  const [highlight, setHighlight] = useState([]);
+
+  const getArticle = () => {
+    setArticle([]);
+    db.transaction(tx => {
+      tx.executeSql(
+        'SELECT * FROM article WHERE ID=?',
+        [articleId],
+        (tx, results) => {
+          setArticle(results.rows.item(0));
+        },
+      );
+    });
+  };
+
+  const getHighlight = () => {
+    setHighlight([]);
+    db.transaction(tx => {
+      tx.executeSql(
+        'SELECT * FROM highlight WHERE id = ?',
+        [articleId],
+        (tx, results) => {
+          const temp = [];
+          for (let i = 0; i < results.rows.length; ++i) {
+            temp.push(results.rows.item(i));
+          }
+          setHighlight(temp);
+        },
+      );
+    });
+  };
+
+  useEffect(() => {
+    getArticle();
+    getHighlight();
+  }, []);
+
+  const selectedArticle = article;
+  const storeHighlight = highlight;
+
+  /* const selectedArticle = useSelector(state =>
     state.news.loadedArticles.find(article => article.id === articleId),
-  );
+  ); */
   //const highlightedArticles = useSelector((state) => highlight.savedHighlights);
+
+  /* const storeHighlight = useSelector(state =>
+    state.highlight.savedHighlights.filter(
+      highlight => highlight.articleId === articleId,
+    ),
+  ); */
 
   return (
     <ScrollView>
@@ -40,13 +86,13 @@ const HighlightScreen = props => {
         </View>
         <View style={styles.content}>
           <SelectableText
-            highlights={[
-              {id: highlightId, start: highlightStart, end: highlightEnd},
-            ]}
+            highlights={storeHighlight}
             highlightColor={'yellow'}
-            value={selectedArticle.content}
+            value={`${selectedArticle.description}\n\n${selectedArticle.content}`}
           />
         </View>
+        {/* <Button title="run" onPress={() => getArticle()} />
+        <Button title="Test" onPress={() => console.log(article)} /> */}
       </View>
     </ScrollView>
   );
@@ -59,8 +105,8 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   content: {
-    paddingTop: 10,
-    fontSize: 12,
+    fontSize: 15,
+    color: 'black',
   },
 });
 

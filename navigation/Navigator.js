@@ -17,7 +17,7 @@ export const AppNavigator = () => {
       <Navigator.Screen name="Select" component={SelectScreen} />
       <Navigator.Screen name="Text" component={TextScreen} />
       <Navigator.Screen name="SavedClip" component={SavedClipScreen} />
-      {/* <Navigator.Screen name="Highlight" component={HighlightScreen} /> */}
+      <Navigator.Screen name="Highlight" component={HighlightScreen} />
     </Navigator.Navigator>
   );
 };

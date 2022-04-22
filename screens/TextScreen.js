@@ -1,29 +1,59 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {View, Text, StyleSheet, ScrollView, Button} from 'react-native';
 import {useSelector, useDispatch} from 'react-redux';
 import {SelectableText} from '@alentoma/react-native-selectable-text';
+import SQLite from 'react-native-sqlite-storage';
 
 import {setHighlight} from '../store/actions/saveHighlight';
 import {deleteSavedHighlight} from '../store/actions/saveHighlight';
+import {insertArticle, insertHighlight} from '../database/db';
 
 const TextScreen = props => {
   const articleId = props.route.params.articleId;
+  const db = SQLite.openDatabase('articles_2.db');
 
   const selectedArticle = useSelector(state =>
     state.news.loadedArticles.find(article => article.id === articleId),
   );
+
+  const articleContent = selectedArticle.content;
+  const articleDescription = selectedArticle.description;
+  const articleDate = selectedArticle.publishTime;
+  const articleSource = selectedArticle.source;
+  const articleTitle = selectedArticle.title;
 
   const storeHighlight = useSelector(state =>
     state.highlight.savedHighlights.filter(
       highlight => highlight.articleId === articleId,
     ),
   );
+
   let highlightId = Math.floor(Math.random() * 1000) + 1;
 
   const dispatch = useDispatch();
 
-  const addToSaved = (highlightId, articleId, highlightText, start, end) => {
+  const addToSaved = (
+    highlightId,
+    articleId,
+    highlightText,
+    start,
+    end,
+    articleSource,
+    articleTitle,
+    articleDescription,
+    articleDate,
+    articleContent,
+  ) => {
     dispatch(setHighlight(highlightId, articleId, highlightText, start, end));
+    insertArticle(
+      articleId,
+      articleSource,
+      articleTitle,
+      articleDescription,
+      articleDate,
+      articleContent,
+    );
+    insertHighlight(articleId, highlightText, start, end);
   };
 
   return (
@@ -53,6 +83,11 @@ const TextScreen = props => {
                 content,
                 selectionStart,
                 selectionEnd,
+                articleSource,
+                articleTitle,
+                articleDescription,
+                articleDate,
+                articleContent,
               );
             }}
             highlights={storeHighlight}
@@ -65,19 +100,33 @@ const TextScreen = props => {
       </View>
 
       <View>
-        {/*  <Button
+        {/* <Button
           title="Array"
           color={'blue'}
           onPress={() => console.log(highlightList)}
-        />
-        <Button
-          title="State"
+        /> */}
+        {/* <Button
+          title="Save Article"
           color={'green'}
-          onPress={() => console.log(storeHighlight)}
+          onPress={() =>
+            insertArticle(
+              articleId,
+              articleSource,
+              articleTitle,
+              articleDescription,
+              articleDate,
+              articleContent,
+            )
+          }
         /> */}
         <Button
           title="Saved Clips"
+          color={'green'}
           onPress={() => props.navigation.navigate('SavedClip')}
+        />
+        <Button
+          title="Search Screen"
+          onPress={() => props.navigation.navigate('Search')}
         />
       </View>
     </ScrollView>

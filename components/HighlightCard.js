@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {
   View,
   Text,
@@ -10,18 +10,24 @@ import {
   Button,
 } from 'react-native';
 import {useDispatch} from 'react-redux';
+import SQLite from 'react-native-sqlite-storage';
 
-import {deleteSavedHighlight} from '../store/actions/saveHighlight';
+//import {deleteSavedHighlight} from '../store/actions/saveHighlight';
 
 const HighlightCard = props => {
   const dispatch = useDispatch();
 
+  const db = SQLite.openDatabase('articles_2.db');
+
+  const delHighlight = () => {
+    db.transaction(tx => {
+      tx.executeSql('DELETE FROM highlight WHERE pk=?', [props.id]);
+    });
+  };
+
   return (
     <View>
-      <Button
-        title="Delete"
-        onPress={() => dispatch(deleteSavedHighlight(props.id))}
-      />
+      <Button title="Delete" onPress={props.onDel} />
       <TouchableNativeFeedback onPress={props.onSelect} useForeground>
         <View style={styles.card}>
           <View style={styles.highlight}>

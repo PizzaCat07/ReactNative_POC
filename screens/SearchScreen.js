@@ -14,12 +14,22 @@ import axios from 'axios';
 
 import SearchBar from '../components/SearchBar';
 import {fetchNews} from '../store/actions/news';
-import BigList from 'react-native-big-list';
+import {
+  delArticle,
+  delHighlight,
+  getAllArticle,
+  getAllHighlight,
+} from '../database/db';
 
 const SearchScreen = props => {
   const [searchPhrasePass, setSearchPhrase] = useState('');
   const [api1, setApi1] = useState(true);
   const [api2, setApi2] = useState(true);
+
+  const delAll = () => {
+    delArticle();
+    delHighlight();
+  };
 
   const fetchAPI = searchPhrasePass => {
     const options = {
@@ -50,12 +60,6 @@ const SearchScreen = props => {
     console.log(res.data);
   };
 
-  const renderItem = ({item}) => (
-    <View>
-      <Text>{item.label}</Text>
-    </View>
-  );
-
   return (
     <View style={styles.container}>
       <TextInput
@@ -66,7 +70,7 @@ const SearchScreen = props => {
       />
       {/* <Button title="Search" color={"green"} /> */}
       <Button
-        color={'red'}
+        color={'green'}
         title="Search"
         onPress={() =>
           props.navigation.navigate('Select', {
@@ -80,7 +84,15 @@ const SearchScreen = props => {
         title="Saved Clips"
         onPress={() => props.navigation.navigate('SavedClip')}
       />
-      {/* <Button title="Test API" onPress={() => fetchAPI(searchPhrasePass)} /> */}
+      <Button
+        title="Test Article "
+        onPress={() => console.log(getAllArticle())}
+      />
+      <Button
+        title="Test Highlight "
+        onPress={() => console.log(getAllHighlight())}
+      />
+      <Button title="Reset" color={'red'} onPress={() => delAll()} />
       <View>
         <View style={styles.filterContainer}>
           <Text>Api 1</Text>
@@ -89,8 +101,6 @@ const SearchScreen = props => {
         <View style={styles.filterContainer}>
           <Text>Api 2</Text>
           <Switch value={api2} onValueChange={newValue => setApi2(newValue)} />
-          {/* {console.log(`API 1: ${api1}`)}
-          {console.log(`API 2: ${api2}`)} */}
         </View>
       </View>
     </View>
