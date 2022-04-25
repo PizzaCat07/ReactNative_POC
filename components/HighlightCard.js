@@ -17,14 +17,6 @@ import SQLite from 'react-native-sqlite-storage';
 const HighlightCard = props => {
   const dispatch = useDispatch();
 
-  const db = SQLite.openDatabase('articles_2.db');
-
-  const delHighlight = () => {
-    db.transaction(tx => {
-      tx.executeSql('DELETE FROM highlight WHERE pk=?', [props.id]);
-    });
-  };
-
   return (
     <View>
       <Button title="Delete" onPress={props.onDel} />

@@ -53,7 +53,7 @@ const TextScreen = props => {
       articleDate,
       articleContent,
     );
-    insertHighlight(articleId, highlightText, start, end);
+    insertHighlight(articleId, highlightText, start, end, highlightId);
   };
 
   return (

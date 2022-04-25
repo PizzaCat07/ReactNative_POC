@@ -1,12 +1,14 @@
 import React, {useEffect, useState} from 'react';
 import {View, Text, StyleSheet, FlatList, Button} from 'react-native';
 import HighlightCard from '../components/HighlightCard';
-import {useSelector} from 'react-redux';
+import {useSelector, useDispatch} from 'react-redux';
 import SQLite from 'react-native-sqlite-storage';
+
+import {deleteSavedHighlight} from '../store/actions/saveHighlight';
 
 const SavedClipScreen = props => {
   const [highlight, setHighlight] = useState([]);
-  const [delHighlightState, setDelHighlightState] = useState(false);
+  const dispatch = useDispatch();
 
   const db = SQLite.openDatabase('articles_2.db');
 
@@ -23,15 +25,16 @@ const SavedClipScreen = props => {
     });
   };
 
-  const delHighlight = () => {
+  const delHighlight = pk => {
     db.transaction(tx => {
-      tx.executeSql('DELETE FROM highlight WHERE pk=?', [props.id]);
+      tx.executeSql('DELETE FROM highlight WHERE pk=?', [pk]);
     });
   };
 
-  const delHighlightHandler = pk => {
+  const delHighlightHandler = (pk, id) => {
     delHighlight(pk);
-    setDelHighlightState(true);
+    dispatch(deleteSavedHighlight(id));
+    setHighlight(getHighlight());
   };
 
   useEffect(() => {
@@ -67,15 +70,16 @@ const SavedClipScreen = props => {
             renderItem={itemData => (
               <HighlightCard
                 text={itemData.item.text}
-                id={itemData.item.pk}
+                id={itemData.item.id}
                 onSelect={() => returnArticleHandler(itemData.item.id)}
-                onDel={() => delHighlightHandler(itemData.item.pk)}
+                onDel={() =>
+                  delHighlightHandler(itemData.item.pk, itemData.item.state_id)
+                }
               />
             )}
           />
         </View>
-        {/*  <Button title="run" onPress={() => getHighlight()} />
-        <Button title="test" onPress={() => console.log(savedHighlights)} /> */}
+        {/* <Button title="run function"  /> */}
       </View>
     </View>
   );

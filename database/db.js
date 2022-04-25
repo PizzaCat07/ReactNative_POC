@@ -58,12 +58,18 @@ export const insertArticle = async (
   }
 };
 
-export const insertHighlight = async (articleId, text, start, end) => {
+export const insertHighlight = async (
+  articleId,
+  text,
+  start,
+  end,
+  state_id,
+) => {
   try {
     await db.transaction(async tx => {
       tx.executeSql(
-        'INSERT INTO highlight(id,text,start,end)VALUES(?,?,?,?) ',
-        [articleId, text, start, end],
+        'INSERT INTO highlight(id,text,start,end,state_id)VALUES(?,?,?,?,?) ',
+        [articleId, text, start, end, state_id],
       );
     });
   } catch (err) {
