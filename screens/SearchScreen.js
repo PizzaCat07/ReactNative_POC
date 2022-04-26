@@ -11,24 +11,62 @@ import {
 } from 'react-native';
 import {useDispatch} from 'react-redux';
 import axios from 'axios';
+import {useIsFocused} from '@react-navigation/native';
 
 import SearchBar from '../components/SearchBar';
 import {fetchNews} from '../store/actions/news';
-import {
-  delArticle,
-  delHighlight,
-  getAllArticle,
-  getAllHighlight,
-} from '../database/db';
+import {delArticle, delHighlight, db} from '../database/db';
 
 const SearchScreen = props => {
   const [searchPhrasePass, setSearchPhrase] = useState('');
   const [api1, setApi1] = useState(true);
   const [api2, setApi2] = useState(true);
 
+  let [syncArticle, setSyncArticle] = useState([]);
+  let syncHighlight = [];
+  const isFocused = useIsFocused();
+
+  useEffect(() => {
+    if (isFocused) {
+      getAllArticle();
+    }
+  }, [isFocused]);
+
   const delAll = () => {
     delArticle();
     delHighlight();
+  };
+
+  const postAPI = item => {
+    const userId = 1;
+    const res = axios.put(
+      `https://app-test-ed25d-default-rtdb.firebaseio.com/article/${userId}/article.json`,
+      {item},
+    );
+    console.log('post article');
+  };
+
+  const getAllArticle = async () => {
+    await db.transaction(tx => {
+      tx.executeSql('SELECT * from article', [], (tx, results) => {
+        const temp = [];
+        for (let i = 0; i < results.rows.length; ++i)
+          temp.push(results.rows.item(i));
+        console.log('get article');
+        setSyncArticle(temp);
+      });
+    });
+  };
+
+  const getAllHighlight = () => {
+    db.transaction(tx => {
+      tx.executeSql('SELECT * from highlight', [], (tx, results) => {
+        const temp = [];
+        for (let i = 0; i < results.rows.length; ++i)
+          temp.push(results.rows.item(i));
+        console.log(temp);
+      });
+    });
   };
 
   const fetchAPI = searchPhrasePass => {
@@ -86,12 +124,13 @@ const SearchScreen = props => {
       />
       <Button
         title="Test Article "
-        onPress={() => console.log(getAllArticle())}
+        onPress={() => console.log(syncArticle.length)}
       />
       <Button
         title="Test Highlight "
         onPress={() => console.log(getAllHighlight())}
       />
+      <Button title="Sync" onPress={() => postAPI(syncArticle)} />
       <Button title="Reset" color={'red'} onPress={() => delAll()} />
       <View>
         <View style={styles.filterContainer}>

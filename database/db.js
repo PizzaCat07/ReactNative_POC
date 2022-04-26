@@ -1,6 +1,6 @@
 import SQLite from 'react-native-sqlite-storage';
 
-const db = SQLite.openDatabase('articles_2.db');
+export const db = SQLite.openDatabase('articles_2.db');
 
 export const init_article = () => {
   const promise = new Promise((resolve, reject) => {
