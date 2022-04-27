@@ -15,7 +15,13 @@ import {useIsFocused} from '@react-navigation/native';
 
 import SearchBar from '../components/SearchBar';
 import {fetchNews} from '../store/actions/news';
-import {delArticle, delHighlight, db} from '../database/db';
+import {
+  delArticle,
+  delHighlight,
+  db,
+  insertArticle,
+  insertHighlight,
+} from '../database/db';
 
 const SearchScreen = props => {
   const [searchPhrasePass, setSearchPhrase] = useState('');
@@ -23,36 +29,40 @@ const SearchScreen = props => {
   const [api2, setApi2] = useState(true);
 
   let [syncArticle, setSyncArticle] = useState([]);
-  let syncHighlight = [];
+  let [syncHighlight, setSyncHighlight] = useState([]);
   const isFocused = useIsFocused();
-
-  useEffect(() => {
-    if (isFocused) {
-      getAllArticle();
-    }
-  }, [isFocused]);
 
   const delAll = () => {
     delArticle();
     delHighlight();
+    console.log('reset');
   };
 
-  const postAPI = item => {
+  useEffect(() => {
+    if (isFocused) {
+      getAllArticle();
+      getAllHighlight();
+    }
+  }, [isFocused]);
+
+  //const date = new Date();
+
+  const postAPI = (item, highlight) => {
     const userId = 1;
     const res = axios.put(
       `https://app-test-ed25d-default-rtdb.firebaseio.com/article/${userId}/article.json`,
-      {item},
+      {item, highlight},
     );
     console.log('post article');
   };
 
-  const getAllArticle = async () => {
-    await db.transaction(tx => {
+  const getAllArticle = () => {
+    db.transaction(tx => {
       tx.executeSql('SELECT * from article', [], (tx, results) => {
         const temp = [];
         for (let i = 0; i < results.rows.length; ++i)
           temp.push(results.rows.item(i));
-        console.log('get article');
+        console.log('get articles');
         setSyncArticle(temp);
       });
     });
@@ -64,12 +74,53 @@ const SearchScreen = props => {
         const temp = [];
         for (let i = 0; i < results.rows.length; ++i)
           temp.push(results.rows.item(i));
-        console.log(temp);
+        console.log('get highlights');
+        setSyncHighlight(temp);
       });
     });
   };
 
-  const fetchAPI = searchPhrasePass => {
+  const downloadAPI = () => {
+    const userId = 1;
+    axios
+      .get(
+        `https://app-test-ed25d-default-rtdb.firebaseio.com/article/${userId}/article.json`,
+      )
+      .then(function (response) {
+        const article = response.data.item;
+        const highlight = response.data.highlight;
+
+        for (let x in article) {
+          insertArticle(
+            article[x].id,
+            article[x].source,
+            article[x].title,
+            article[x].description,
+            article[x].date,
+            article[x].content,
+          );
+          //console.log(article[x]);
+          console.log('insert Article complete');
+        }
+
+        for (let x in highlight) {
+          insertHighlight(
+            highlight[x].id,
+            highlight[x].text,
+            highlight[x].start,
+            highlight[x].end,
+            highlight[x].state_id,
+          );
+          //console.log(highlight[x]);
+          console.log('insert Highlight complete');
+        }
+        getAllArticle();
+        getAllHighlight();
+        console.log('download complete');
+      });
+  };
+
+  /*  const fetchAPI = searchPhrasePass => {
     const options = {
       method: 'GET',
       url: 'https://free-news.p.rapidapi.com/v1/search',
@@ -97,6 +148,7 @@ const SearchScreen = props => {
     );
     console.log(res.data);
   };
+ */
 
   return (
     <View style={styles.container}>
@@ -122,16 +174,14 @@ const SearchScreen = props => {
         title="Saved Clips"
         onPress={() => props.navigation.navigate('SavedClip')}
       />
+
       <Button
-        title="Test Article "
-        onPress={() => console.log(syncArticle.length)}
+        title="Upload"
+        color={'teal'}
+        onPress={() => postAPI(syncArticle, syncHighlight)}
       />
-      <Button
-        title="Test Highlight "
-        onPress={() => console.log(getAllHighlight())}
-      />
-      <Button title="Sync" onPress={() => postAPI(syncArticle)} />
-      <Button title="Reset" color={'red'} onPress={() => delAll()} />
+      <Button title="Download" color={'teal'} onPress={() => downloadAPI()} />
+
       <View>
         <View style={styles.filterContainer}>
           <Text>Api 1</Text>
@@ -140,6 +190,17 @@ const SearchScreen = props => {
         <View style={styles.filterContainer}>
           <Text>Api 2</Text>
           <Switch value={api2} onValueChange={newValue => setApi2(newValue)} />
+        </View>
+        <View>
+          <Button
+            title="Test Article "
+            onPress={() => console.log(syncArticle.length)}
+          />
+          <Button
+            title="Test Highlight "
+            onPress={() => console.log(syncHighlight.length)}
+          />
+          <Button title="Reset" color={'red'} onPress={() => delAll()} />
         </View>
       </View>
     </View>
