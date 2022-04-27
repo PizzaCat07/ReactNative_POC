@@ -11,15 +11,11 @@ import {
 } from 'react-native';
 import {useDispatch} from 'react-redux';
 import SQLite from 'react-native-sqlite-storage';
-
-//import {deleteSavedHighlight} from '../store/actions/saveHighlight';
+import Icon from 'react-native-vector-icons/Ionicons';
 
 const HighlightCard = props => {
-  const dispatch = useDispatch();
-
   return (
     <View>
-      <Button title="Delete" onPress={props.onDel} />
       <TouchableNativeFeedback onPress={props.onSelect} useForeground>
         <View style={styles.card}>
           <View style={styles.highlight}>
@@ -27,6 +23,9 @@ const HighlightCard = props => {
           </View>
         </View>
       </TouchableNativeFeedback>
+      <View style={styles.icon}>
+        <Icon name="md-trash-sharp" size={30} onPress={props.onDel} />
+      </View>
     </View>
   );
 };
@@ -49,6 +48,11 @@ const styles = StyleSheet.create({
   },
   highlight: {
     paddingTop: 10,
+  },
+  icon: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'red',
   },
 });
 
