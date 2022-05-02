@@ -3,7 +3,7 @@ import {
   View,
   Text,
   StyleSheet,
-  TouchableOpacity,
+  TouchableHighlight,
   ScrollView,
   Button,
   TextInput,
@@ -12,6 +12,7 @@ import {
 import {useDispatch} from 'react-redux';
 import axios from 'axios';
 import {useIsFocused} from '@react-navigation/native';
+import Icon from 'react-native-vector-icons/Ionicons';
 
 import SearchBar from '../components/SearchBar';
 import {fetchNews} from '../store/actions/news';
@@ -172,16 +173,22 @@ const SearchScreen = props => {
       />
       <Button
         title="Saved Clips"
-        onPress={() => props.navigation.navigate('SavedClip')}
+        onPress={() =>
+          props.navigation.navigate('Saved Highlights', {screen: 'SavedClip'})
+        }
       />
-
-      <Button
-        title="Upload"
-        color={'teal'}
-        onPress={() => postAPI(syncArticle, syncHighlight)}
-      />
-      <Button title="Download" color={'teal'} onPress={() => downloadAPI()} />
-
+      <View style={styles.cloud}>
+        <TouchableHighlight
+          onPress={() => postAPI(syncArticle, syncHighlight)}
+          underlayColor="yellow">
+          <Icon name="md-cloud-upload-sharp" size={40} color="blue" />
+        </TouchableHighlight>
+        <TouchableHighlight
+          onPress={() => downloadAPI()}
+          underlayColor="yellow">
+          <Icon name="md-cloud-download-sharp" size={40} color="blue" />
+        </TouchableHighlight>
+      </View>
       <View>
         <View style={styles.filterContainer}>
           <Text>Api 1</Text>
@@ -222,6 +229,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
+  },
+  cloud: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-evenly',
+    width: '40%',
   },
 });
 

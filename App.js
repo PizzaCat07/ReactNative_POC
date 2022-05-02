@@ -13,6 +13,7 @@ import thunk from 'redux-thunk';
 import {composeWithDevTools} from 'redux-devtools-extension';
 
 import {AppNavigator} from './navigation/Navigator';
+import {TabNavigator} from './navigation/Tab';
 import newsReducer from './store/reducers/news';
 import highlightReducer from './store/reducers/saveHighlight';
 import {init_article, init_highlight} from './database/db';
@@ -49,7 +50,7 @@ export default function App() {
   return (
     <Provider store={store}>
       <NavigationContainer>
-        <AppNavigator />
+        <TabNavigator />
       </NavigationContainer>
     </Provider>
   );
