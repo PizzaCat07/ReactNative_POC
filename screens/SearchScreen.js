@@ -173,9 +173,7 @@ const SearchScreen = props => {
       />
       <Button
         title="Saved Clips"
-        onPress={() =>
-          props.navigation.navigate('Saved Highlights', {screen: 'SavedClip'})
-        }
+        onPress={() => props.navigation.navigate('SavedClip')}
       />
       <View style={styles.cloud}>
         <TouchableHighlight

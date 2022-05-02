@@ -122,7 +122,7 @@ const TextScreen = props => {
         <Button
           title="Saved Clips"
           color={'green'}
-          onPress={() => props.navigation.navigate('Saved Clip')}
+          onPress={() => props.navigation.navigate('SavedClip')}
         />
         <Button
           title="Search Screen"
