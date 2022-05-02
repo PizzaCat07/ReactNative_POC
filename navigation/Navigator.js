@@ -1,6 +1,8 @@
 import React from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import Icon from 'react-native-vector-icons/Ionicons';
 
 import SearchScreen from '../screens/SearchScreen';
 import SelectScreen from '../screens/SelectScreen';
@@ -8,16 +10,45 @@ import TextScreen from '../screens/TextScreen';
 import HighlightScreen from '../screens/HighlightedArticle';
 import SavedClipScreen from '../screens/SavedClipScreen';
 
-const Navigator = createNativeStackNavigator();
+const Stack = createNativeStackNavigator();
+const Tab = createBottomTabNavigator();
 
 export const AppNavigator = () => {
   return (
-    <Navigator.Navigator>
-      <Navigator.Screen name="Search" component={SearchScreen} />
-      <Navigator.Screen name="Select" component={SelectScreen} />
-      <Navigator.Screen name="Text" component={TextScreen} />
-      <Navigator.Screen name="SavedClip" component={SavedClipScreen} />
-      <Navigator.Screen name="Highlight" component={HighlightScreen} />
-    </Navigator.Navigator>
+    <Stack.Navigator>
+      <Stack.Screen name="Search" component={SearchScreen} />
+      <Stack.Screen name="Select" component={SelectScreen} />
+      <Stack.Screen name="Text" component={TextScreen} />
+      <Stack.Screen name="SavedClip" component={SavedClipScreen} />
+      <Stack.Screen name="Highlight" component={HighlightScreen} />
+    </Stack.Navigator>
+  );
+};
+
+export const ResultsNavigator = () => {
+  return (
+    <Stack.Navigator>
+      <Stack.Screen name="Select" component={SelectScreen} />
+      <Stack.Screen name="Text" component={TextScreen} />
+    </Stack.Navigator>
+  );
+};
+
+export const SavedNavigator = () => {
+  return (
+    <Stack.Navigator>
+      <Stack.Screen name="SavedClip" component={SavedClipScreen} />
+      <Stack.Screen name="Highlight" component={HighlightScreen} />
+    </Stack.Navigator>
+  );
+};
+
+export const TabNavigator = () => {
+  return (
+    <Tab.Navigator screenOptions={{headerShown: false}}>
+      <Tab.Screen name="Search" component={SearchScreen} />
+      <Tab.Screen name="Results" component={ResultsNavigator} />
+      <Tab.Screen name="Saved" component={SavedNavigator} />
+    </Tab.Navigator>
   );
 };

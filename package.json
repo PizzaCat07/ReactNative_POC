@@ -12,6 +12,7 @@
   "dependencies": {
     "@alentoma/react-native-selectable-text": "^1.5.5",
     "@react-native-clipboard/clipboard": "^1.8.5",
+    "@react-navigation/bottom-tabs": "^6.3.1",
     "@react-navigation/native": "^6.0.10",
     "@react-navigation/native-stack": "^6.6.1",
     "axios": "^0.26.1",
