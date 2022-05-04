@@ -11,6 +11,7 @@ import {
   TextInput,
 } from 'react-native';
 import {useSelector, useDispatch} from 'react-redux';
+import {useIsFocused} from '@react-navigation/native';
 
 import {fetchNews, fetchNews2, fetchNews_all} from '../store/actions/news';
 import SummaryCard from '../components/SummaryCard';
@@ -19,6 +20,7 @@ import SearchBar from '../components/SearchBar';
 
 const SelectScreen = props => {
   const {loadedArticles} = useSelector(state => state.news);
+  const isFocused = useIsFocused();
 
   const dispatch = useDispatch();
   const searchPhrasePass = props.route.params.searchPhrasePass;
@@ -41,8 +43,15 @@ const SelectScreen = props => {
   };
 
   useEffect(() => {
+    if (isFocused) {
+      dispatch(fetchData());
+    }
+  }, [isFocused]);
+
+  /*   useEffect(() => {
     dispatch(fetchData());
-  }, []);
+    console.log('fetch');
+  }, []); */
 
   return (
     <View>

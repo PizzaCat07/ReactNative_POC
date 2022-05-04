@@ -37,6 +37,8 @@ const SearchScreen = props => {
     delArticle();
     delHighlight();
     console.log('reset');
+    getAllArticle();
+    getAllHighlight();
   };
 
   useEffect(() => {
@@ -171,10 +173,10 @@ const SearchScreen = props => {
           })
         }
       />
-      <Button
+      {/* <Button
         title="Saved Clips"
         onPress={() => props.navigation.navigate('SavedClip')}
-      />
+      /> */}
       <View style={styles.cloud}>
         <TouchableHighlight
           onPress={() => postAPI(syncArticle, syncHighlight)}
@@ -196,17 +198,17 @@ const SearchScreen = props => {
           <Text>Api 2</Text>
           <Switch value={api2} onValueChange={newValue => setApi2(newValue)} />
         </View>
-        <View>
-          <Button
-            title="Test Article "
-            onPress={() => console.log(syncArticle.length)}
-          />
-          <Button
-            title="Test Highlight "
-            onPress={() => console.log(syncHighlight.length)}
-          />
-          <Button title="Reset" color={'red'} onPress={() => delAll()} />
-        </View>
+      </View>
+      <View style={styles.debug}>
+        {/* <Button
+          title="Test Article "
+          onPress={() => console.log(syncArticle.length)}
+        />
+        <Button
+          title="Test Highlight "
+          onPress={() => console.log(syncHighlight.length)}
+        /> */}
+        <Button title="Delete DB" color={'red'} onPress={() => delAll()} />
       </View>
     </View>
   );
@@ -233,6 +235,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-evenly',
     width: '40%',
+  },
+  debug: {
+    flexDirection: 'row',
+    paddingVertical: 220,
   },
 });
 

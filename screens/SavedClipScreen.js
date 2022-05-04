@@ -3,12 +3,14 @@ import {View, Text, StyleSheet, FlatList, Button} from 'react-native';
 import HighlightCard from '../components/HighlightCard';
 import {useSelector, useDispatch} from 'react-redux';
 import SQLite from 'react-native-sqlite-storage';
+import {useIsFocused} from '@react-navigation/native';
 
 import {deleteSavedHighlight} from '../store/actions/saveHighlight';
 
 const SavedClipScreen = props => {
   const [highlight, setHighlight] = useState([]);
   const dispatch = useDispatch();
+  const isFocused = useIsFocused();
 
   const db = SQLite.openDatabase('articles_2.db');
 
@@ -37,9 +39,13 @@ const SavedClipScreen = props => {
     setHighlight(getHighlight());
   };
 
-  useEffect(() => {
-    getHighlight();
-  }, []);
+  useEffect(
+    isFocused => {
+      getHighlight();
+      console.log('get highlights');
+    },
+    [isFocused],
+  );
 
   const savedHighlights = highlight;
 

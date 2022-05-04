@@ -119,7 +119,7 @@ const TextScreen = props => {
             )
           }
         /> */}
-        <Button
+        {/* <Button
           title="Saved Clips"
           color={'green'}
           onPress={() => props.navigation.navigate('SavedClip')}
@@ -127,7 +127,7 @@ const TextScreen = props => {
         <Button
           title="Search Screen"
           onPress={() => props.navigation.navigate('Search')}
-        />
+        /> */}
       </View>
     </ScrollView>
   );
