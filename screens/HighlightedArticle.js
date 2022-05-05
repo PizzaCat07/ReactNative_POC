@@ -1,26 +1,18 @@
 import React, {useState, useEffect} from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  ScrollView,
-  Button,
-} from 'react-native';
-import {useSelector, useDispatch} from 'react-redux';
+import {View, Text, StyleSheet, ScrollView} from 'react-native';
 import {SelectableText} from '@alentoma/react-native-selectable-text';
-import SQLite from 'react-native-sqlite-storage';
-
-import {setHighlight} from '../store/actions/saveHighlight';
+import {db} from '../database/db';
 
 const HighlightScreen = props => {
+  //get articleID from props sent from highlight card component
   const articleId = props.route.params.articleId;
 
-  const db = SQLite.openDatabase('articles_2.db');
   const [article, setArticle] = useState([]);
   const [highlight, setHighlight] = useState([]);
 
+  //function to get article from local db
   const getArticle = () => {
+    //reset article state to empty array
     setArticle([]);
     db.transaction(tx => {
       tx.executeSql(
@@ -33,7 +25,9 @@ const HighlightScreen = props => {
     });
   };
 
+  //function to get highlights from local db
   const getHighlight = () => {
+    //reset highlight state to empty array
     setHighlight([]);
     db.transaction(tx => {
       tx.executeSql(
@@ -58,17 +52,6 @@ const HighlightScreen = props => {
   const selectedArticle = article;
   const storeHighlight = highlight;
 
-  /* const selectedArticle = useSelector(state =>
-    state.news.loadedArticles.find(article => article.id === articleId),
-  ); */
-  //const highlightedArticles = useSelector((state) => highlight.savedHighlights);
-
-  /* const storeHighlight = useSelector(state =>
-    state.highlight.savedHighlights.filter(
-      highlight => highlight.articleId === articleId,
-    ),
-  ); */
-
   return (
     <ScrollView>
       <View>
@@ -91,8 +74,6 @@ const HighlightScreen = props => {
             value={`${selectedArticle.description}\n\n${selectedArticle.content}`}
           />
         </View>
-        {/* <Button title="run" onPress={() => getArticle()} />
-        <Button title="Test" onPress={() => console.log(article)} /> */}
       </View>
     </ScrollView>
   );

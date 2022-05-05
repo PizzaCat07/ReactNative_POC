@@ -4,7 +4,6 @@ import {
   Text,
   StyleSheet,
   TouchableHighlight,
-  ScrollView,
   Button,
   TextInput,
   Switch,
@@ -14,8 +13,6 @@ import axios from 'axios';
 import {useIsFocused} from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons';
 
-import SearchBar from '../components/SearchBar';
-import {fetchNews} from '../store/actions/news';
 import {
   delArticle,
   delHighlight,
@@ -25,14 +22,18 @@ import {
 } from '../database/db';
 
 const SearchScreen = props => {
+  // Set states to re render on changes
+
   const [searchPhrasePass, setSearchPhrase] = useState('');
   const [api1, setApi1] = useState(true);
   const [api2, setApi2] = useState(true);
-
   let [syncArticle, setSyncArticle] = useState([]);
   let [syncHighlight, setSyncHighlight] = useState([]);
+
+  //declared for useEffect, sets it that it re-renders when screen is loaded
   const isFocused = useIsFocused();
 
+  // debug function to delete all data from SQL lite DB
   const delAll = () => {
     delArticle();
     delHighlight();
@@ -41,6 +42,7 @@ const SearchScreen = props => {
     getAllHighlight();
   };
 
+  //on render run the functions, re run on focus
   useEffect(() => {
     if (isFocused) {
       getAllArticle();
@@ -48,8 +50,7 @@ const SearchScreen = props => {
     }
   }, [isFocused]);
 
-  //const date = new Date();
-
+  //function to upload DB info to 'cloud' via api
   const postAPI = (item, highlight) => {
     const userId = 1;
     const res = axios.put(
@@ -59,6 +60,7 @@ const SearchScreen = props => {
     console.log('post article');
   };
 
+  //function to download all articles from local db and push it a empty array, and set the state to array
   const getAllArticle = () => {
     db.transaction(tx => {
       tx.executeSql('SELECT * from article', [], (tx, results) => {
@@ -71,6 +73,7 @@ const SearchScreen = props => {
     });
   };
 
+  //function to download all highlights from local db and push it a empty array, and set the state to array
   const getAllHighlight = () => {
     db.transaction(tx => {
       tx.executeSql('SELECT * from highlight', [], (tx, results) => {
@@ -83,6 +86,7 @@ const SearchScreen = props => {
     });
   };
 
+  //download all data from cloud and insert it into local database
   const downloadAPI = () => {
     const userId = 1;
     axios
@@ -93,6 +97,7 @@ const SearchScreen = props => {
         const article = response.data.item;
         const highlight = response.data.highlight;
 
+        //imported function to insert article into local db
         for (let x in article) {
           insertArticle(
             article[x].id,
@@ -106,6 +111,7 @@ const SearchScreen = props => {
           console.log('insert Article complete');
         }
 
+        //imported function to insert highlight into local db
         for (let x in highlight) {
           insertHighlight(
             highlight[x].id,
@@ -123,45 +129,16 @@ const SearchScreen = props => {
       });
   };
 
-  /*  const fetchAPI = searchPhrasePass => {
-    const options = {
-      method: 'GET',
-      url: 'https://free-news.p.rapidapi.com/v1/search',
-      params: {q: searchPhrasePass, lang: 'en'},
-      headers: {
-        'X-RapidAPI-Host': 'free-news.p.rapidapi.com',
-        'X-RapidAPI-Key': 'ea26f9eafbmsh116432203cf2f7ap100ba6jsn92d116678e77',
-      },
-    };
-
-    axios
-      .request(options)
-      .then(function (response) {
-        console.log(searchPhrasePass);
-        console.log(response.data);
-      })
-      .catch(function (error) {
-        console.error(error);
-      });
-  };
-
-  const fetchApi_1 = async () => {
-    const res = await axios.get(
-      'https://newsapi.org//v2/top-headlines?country=ca&apiKey=f48f7a5665ab4ed484c1090882ecb228',
-    );
-    console.log(res.data);
-  };
- */
-
   return (
     <View style={styles.container}>
+      {/* Search Bar */}
       <TextInput
         style={styles.input}
         placeholder="Search"
         value={searchPhrasePass}
         onChangeText={setSearchPhrase}
       />
-      {/* <Button title="Search" color={"green"} /> */}
+      {/* Search button that passes the search criteria and API flags to the select Articles screen */}
       <Button
         color={'green'}
         title="Search"

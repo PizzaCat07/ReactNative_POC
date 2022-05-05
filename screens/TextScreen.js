@@ -1,17 +1,17 @@
-import React, {useState, useEffect} from 'react';
-import {View, Text, StyleSheet, ScrollView, Button} from 'react-native';
+import React from 'react';
+import {View, Text, StyleSheet, ScrollView} from 'react-native';
 import {useSelector, useDispatch} from 'react-redux';
 import {SelectableText} from '@alentoma/react-native-selectable-text';
-import SQLite from 'react-native-sqlite-storage';
 
 import {setHighlight} from '../store/actions/saveHighlight';
 import {deleteSavedHighlight} from '../store/actions/saveHighlight';
 import {insertArticle, insertHighlight} from '../database/db';
 
 const TextScreen = props => {
+  //get article unique ID from summary card component
   const articleId = props.route.params.articleId;
-  const db = SQLite.openDatabase('articles_2.db');
 
+  //get articles from state which equal the article unique ID
   const selectedArticle = useSelector(state =>
     state.news.loadedArticles.find(article => article.id === articleId),
   );
@@ -22,16 +22,19 @@ const TextScreen = props => {
   const articleSource = selectedArticle.source;
   const articleTitle = selectedArticle.title;
 
+  //get highlights from state based on article unique ID
   const storeHighlight = useSelector(state =>
     state.highlight.savedHighlights.filter(
       highlight => highlight.articleId === articleId,
     ),
   );
 
+  //create random unique ID for highlight
   let highlightId = Math.floor(Math.random() * 1000) + 1;
 
   const dispatch = useDispatch();
 
+  //function to combine several functions for highlight and save button, it pushes highlights to both the state via actions and to the internal DB along with the article
   const addToSaved = (
     highlightId,
     articleId,
@@ -44,7 +47,9 @@ const TextScreen = props => {
     articleDate,
     articleContent,
   ) => {
+    //dispatch action to save highlight in state
     dispatch(setHighlight(highlightId, articleId, highlightText, start, end));
+    //insert article into local DB
     insertArticle(
       articleId,
       articleSource,
@@ -53,6 +58,7 @@ const TextScreen = props => {
       articleDate,
       articleContent,
     );
+    //insert highlight into local db
     insertHighlight(articleId, highlightText, start, end, highlightId);
   };
 
@@ -69,6 +75,7 @@ const TextScreen = props => {
       </View>
       <View>
         <View style={styles.content}>
+          {/* Module to allow for highlighting and running a function via button API info at https://www.npmjs.com/package/@alentoma/react-native-selectable-text */}
           <SelectableText
             menuItems={['Highlight and Save']}
             onSelection={({
@@ -97,37 +104,6 @@ const TextScreen = props => {
             value={`${selectedArticle.description}\n\n${selectedArticle.content}`}
           />
         </View>
-      </View>
-
-      <View>
-        {/* <Button
-          title="Array"
-          color={'blue'}
-          onPress={() => console.log(highlightList)}
-        /> */}
-        {/* <Button
-          title="Save Article"
-          color={'green'}
-          onPress={() =>
-            insertArticle(
-              articleId,
-              articleSource,
-              articleTitle,
-              articleDescription,
-              articleDate,
-              articleContent,
-            )
-          }
-        /> */}
-        {/* <Button
-          title="Saved Clips"
-          color={'green'}
-          onPress={() => props.navigation.navigate('SavedClip')}
-        />
-        <Button
-          title="Search Screen"
-          onPress={() => props.navigation.navigate('Search')}
-        /> */}
       </View>
     </ScrollView>
   );

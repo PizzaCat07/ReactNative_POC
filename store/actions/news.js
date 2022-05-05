@@ -1,14 +1,15 @@
 import axios from 'axios';
-
 import Article from '../../models/article';
 
 export const SET_NEWS = 'SET_NEWS';
 export const SET_NEWS_2 = 'SET_NEWS_2';
 export const SET_NEWS_ALL = 'SET_NEWS_ALL';
 
+//news api 1
 const api1_url =
   'https://newsapi.org//v2/top-headlines?country=ca&apiKey=f48f7a5665ab4ed484c1090882ecb228';
 
+//news api 2
 const api2_options = {
   method: 'GET',
   url: 'https://free-news.p.rapidapi.com/v1/search',

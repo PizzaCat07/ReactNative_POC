@@ -1,20 +1,19 @@
 import React, {useEffect, useState} from 'react';
-import {View, Text, StyleSheet, FlatList, Button} from 'react-native';
+import {View, StyleSheet, FlatList} from 'react-native';
 import HighlightCard from '../components/HighlightCard';
-import {useSelector, useDispatch} from 'react-redux';
-import SQLite from 'react-native-sqlite-storage';
-import {useIsFocused} from '@react-navigation/native';
+import {useDispatch} from 'react-redux';
+import {db} from '../database/db';
 
 import {deleteSavedHighlight} from '../store/actions/saveHighlight';
 
 const SavedClipScreen = props => {
+  //set state for highlight
   const [highlight, setHighlight] = useState([]);
   const dispatch = useDispatch();
-  const isFocused = useIsFocused();
 
-  const db = SQLite.openDatabase('articles_2.db');
-
+  //function to get highlights from local db
   const getHighlight = () => {
+    //reset highlight state to empty array
     setHighlight([]);
     db.transaction(tx => {
       tx.executeSql('SELECT * FROM highlight', [], (tx, results) => {
@@ -27,44 +26,33 @@ const SavedClipScreen = props => {
     });
   };
 
+  //function to del highlight from local db
   const delHighlight = pk => {
     db.transaction(tx => {
       tx.executeSql('DELETE FROM highlight WHERE pk=?', [pk]);
     });
   };
 
+  //combine functions to delete highlights from state and local db
   const delHighlightHandler = (pk, id) => {
     delHighlight(pk);
     dispatch(deleteSavedHighlight(id));
     setHighlight(getHighlight());
   };
 
-  useEffect(
-    isFocused => {
-      getHighlight();
-      console.log('get highlights');
-    },
-    [isFocused],
-  );
+  useEffect(() => {
+    getHighlight();
+    console.log('get highlights');
+  }, []);
 
   const savedHighlights = highlight;
 
-  /*  const {savedHighlights} = useSelector(state => state.highlight); */
-
+  //navigation to move to highlight screen
   const returnArticleHandler = articleId => {
     props.navigation.navigate('Highlight', {
       articleId: articleId,
     });
   };
-
-  /*  const returnArticleHandler = (id, articleId, start, end) => {
-    props.navigation.navigate('Highlight', {
-      id: id,
-      articleId: articleId,
-      start: start,
-      end: end,
-    });
-  }; */
 
   return (
     <View>
@@ -85,7 +73,6 @@ const SavedClipScreen = props => {
             )}
           />
         </View>
-        {/* <Button title="run function"  /> */}
       </View>
     </View>
   );

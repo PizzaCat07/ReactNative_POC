@@ -2,8 +2,8 @@ import React from 'react';
 import {View, Text, StyleSheet, TouchableOpacity, FlatList} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import Highlighter from 'react-native-highlight-words';
-import BigList from 'react-native-big-list';
 
+//create item component
 const Item = ({title, searchWords, source, date, description}) => (
   <View style={styles.card}>
     <View>
@@ -28,6 +28,7 @@ const Item = ({title, searchWords, source, date, description}) => (
 );
 
 const SummaryCard = ({searchPhrase, setClicked, data}) => {
+  //data is the loaded articles from state
   const navigation = useNavigation();
   const searchWords = [searchPhrase];
 
@@ -48,100 +49,6 @@ const SummaryCard = ({searchPhrase, setClicked, data}) => {
     );
   };
 
-  /* const renderItem = ({item}) => {
-    // when no input, show all
-    if (searchPhrase === '') {
-      return (
-        <TouchableOpacity
-          onPress={() => navigation.navigate('Text', {articleId: item.id})}>
-          <View>
-            <Item
-              title={item.title}
-              source={item.source}
-              date={item.publishTime}
-              description={item.description}
-            />
-          </View>
-        </TouchableOpacity>
-      );
-    }
-    // filter of the name
-    if (
-      item.title
-        .toUpperCase()
-        .includes(searchPhrase.toUpperCase().trim().replace(/\s/g, ''))
-    ) {
-      return (
-        <TouchableOpacity
-          onPress={() => navigation.navigate('Text', {articleId: item.id})}>
-          <View style={styles.card}>
-            <View>
-              <Text style={styles.title}>
-                <Highlighter
-                  highlightStyle={{backgroundColor: 'yellow'}}
-                  searchWords={searchWords}
-                  textToHighlight={item.title}
-                />
-              </Text>
-            </View>
-            <View>
-              <Text>{item.source}</Text>
-            </View>
-            <View>
-              <Text>{item.date}</Text>
-            </View>
-            <View>
-              <Text style={styles.description}>
-                <Highlighter
-                  highlightStyle={{backgroundColor: 'yellow'}}
-                  searchWords={searchWords}
-                  textToHighlight={item.description}
-                />
-              </Text>
-            </View>
-          </View>
-        </TouchableOpacity>
-      );
-    }
-    if (
-      item.description
-        .toUpperCase()
-        .includes(searchPhrase.toUpperCase().trim().replace(/\s/g, ''))
-    ) {
-      return (
-        <TouchableOpacity
-          onPress={() => navigation.navigate('Text', {articleId: item.id})}>
-          <View style={styles.card}>
-            <View>
-              <Text style={styles.title}>
-                <Highlighter
-                  highlightStyle={{backgroundColor: 'yellow'}}
-                  searchWords={searchWords}
-                  textToHighlight={item.title}
-                />
-              </Text>
-            </View>
-            <View>
-              <Text>{item.source}</Text>
-            </View>
-            <View>
-              <Text>{item.date}</Text>
-            </View>
-            <View>
-              <Text style={styles.description}>
-                <Highlighter
-                  highlightStyle={{backgroundColor: 'yellow'}}
-                  searchWords={searchWords}
-                  textToHighlight={item.description}
-                />
-              </Text>
-            </View>
-          </View>
-        </TouchableOpacity>
-      );
-    }
-  }; */
-
   return (
     <View
       onStartShouldSetResponder={() => {
@@ -155,27 +62,6 @@ const SummaryCard = ({searchPhrase, setClicked, data}) => {
     </View>
   );
 };
-
-/* const SummaryCard = (props) => {
-  return (
-    <TouchableNativeFeedback onPress={props.onSelect} useForeground>
-      <View style={styles.card}>
-        <View>
-          <Text style={styles.title}>{props.title}</Text>
-        </View>
-        <View>
-          <Text>{props.source}</Text>
-        </View>
-        <View>
-          <Text>{props.date}</Text>
-        </View>
-        <View>
-          <Text style={styles.description}>{props.description}</Text>
-        </View>
-      </View>
-    </TouchableNativeFeedback>
-  );
-}; */
 
 const styles = StyleSheet.create({
   card: {

@@ -1,16 +1,5 @@
-import React, {useState} from 'react';
-import {
-  View,
-  Text,
-  Image,
-  StyleSheet,
-  TouchableOpacity,
-  TouchableNativeFeedback,
-  Platform,
-  Button,
-} from 'react-native';
-import {useDispatch} from 'react-redux';
-import SQLite from 'react-native-sqlite-storage';
+import React from 'react';
+import {View, Text, StyleSheet, TouchableNativeFeedback} from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 
 const HighlightCard = props => {
